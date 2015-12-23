@@ -96,8 +96,8 @@ module Usagewatch
   # Percentage of mem used
   def self.uw_memused
     top = `top -l1 | awk '/PhysMem/'`
-    top = top.gsub(/[\.\,a-zA-Z:]/, "").split(" ").reverse
-    ((top[1].to_f / (top[0].to_f + top[1].to_f)) * 100).round(2)
+    top = top.gsub(/[\.\,a-zA-Z:\(\)]/, "").split(" ")
+    ((top[0].to_f / (top[0].to_f + top[2].to_f)) * 100).round(2)
   end
 
   # Show the average of load in the last minute
