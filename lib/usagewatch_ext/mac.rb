@@ -58,10 +58,12 @@ module Usagewatch
     df.each_line.with_index do |line, line_index|
       line = line.split(" ")
       next if line_index.eql? 0 or line[0] =~ /localhost/ #ignore backup filesystem
-      total  += to_gb line[3].to_f
+      total  += to_gb line[1].to_f
       used   += to_gb line[2].to_f
     end
-    ((used/total) * 100).round(2)
+    { used: used.round(2),
+      total: total.round(2),
+      diskused_perc: ((used.round(2)/total.round(2)) * 100).round(2)}
   end
 
   # Show the percentage of cpu used
@@ -97,7 +99,11 @@ module Usagewatch
   def self.uw_memused
     top = `top -l1 | awk '/PhysMem/'`
     top = top.gsub(/[\.\,a-zA-Z:\(\)]/, "").split(" ")
-    ((top[0].to_f / (top[0].to_f + top[2].to_f)) * 100).round(2)
+    memtotal = top[0].to_f + top[2].to_f
+    memactive = top[0].to_f
+    { memtotal: memtotal,
+      memactive: memactive,
+      memused: ((memactive / memtotal) * 100).round(2)}
   end
 
   # Show the average of load in the last minute
